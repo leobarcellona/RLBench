@@ -89,11 +89,22 @@ def copy_directory(input_path, output_path, gt_masks=False, DEPTH_SCALE = 2 ** 2
     os.makedirs(os.path.join(output_path, "depth"), exist_ok=True)
     os.makedirs(os.path.join(output_path, "depth_scaled"), exist_ok=True)
     for image in images:
+        image_name = image.split(".")[0]
+
         path_depth_image = os.path.join(input_path, "depths", image)
         # copy the depth image
         shutil.copy(path_depth_image, os.path.join(output_path, "depth", image))
         depth_sim = Image.open(path_depth_image)
+
+        # remove the compression
         depth_sim_array = image_to_float_array(depth_sim, DEPTH_SCALE)
+        with open(os.path.join(input_path, "poses", image_name + "_near_far.txt"), "r") as near_far_file:
+            lines = near_far_file.read().split("\n")
+            far = float(lines[0].split(" ")[1])
+            near = float(lines[0].split(" ")[0])
+            depth_sim_array = (far - near) * depth_sim_array + near
+
+        # save the depth image
         np.save(os.path.join(output_path, "depth_scaled", image.split(".")[0]+".npy"), depth_sim_array)
 
 
