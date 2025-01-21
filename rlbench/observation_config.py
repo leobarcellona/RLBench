@@ -1,6 +1,6 @@
 from pyrep.const import RenderMode
 from rlbench.noise_model import NoiseModel, Identity
-
+from termcolor import colored
 
 class CameraConfig(object):
     def __init__(self,
@@ -30,6 +30,8 @@ class CameraConfig(object):
         self.depth = value
         self.point_cloud = value
         self.mask = value
+        # # for nerf
+        # self.point_cloud_nerf = value
 
 
 class ObservationConfig(object):
@@ -53,6 +55,8 @@ class ObservationConfig(object):
                  wrist_camera_matrix=False,
                  record_gripper_closing=False,
                  task_low_dim_state=False,
+                 record_ignore_collisions=True,
+                 nerf_multi_view=True,
                  ):
         self.left_shoulder_camera = (
             CameraConfig() if left_shoulder_camera is None
@@ -69,6 +73,8 @@ class ObservationConfig(object):
         self.front_camera = (
             CameraConfig() if front_camera is None
             else front_camera)
+        self.nerf_multi_view = nerf_multi_view
+        # print(colored("[ObservationConfig] nerf_multi_view: {}".format(nerf_multi_view), "green"))
         self.joint_velocities = joint_velocities
         self.joint_velocities_noise = joint_velocities_noise
         self.joint_positions = joint_positions
@@ -83,6 +89,7 @@ class ObservationConfig(object):
         self.wrist_camera_matrix = wrist_camera_matrix
         self.record_gripper_closing = record_gripper_closing
         self.task_low_dim_state = task_low_dim_state
+        self.record_ignore_collisions = record_ignore_collisions
 
     def set_all(self, value: bool):
         self.set_all_high_dim(value)
@@ -94,6 +101,7 @@ class ObservationConfig(object):
         self.overhead_camera.set_all(value)
         self.wrist_camera.set_all(value)
         self.front_camera.set_all(value)
+
 
     def set_all_low_dim(self, value: bool):
         self.joint_velocities = value

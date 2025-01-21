@@ -1,6 +1,13 @@
 # RLBench: Robot Learning Benchmark [![Unit Tests](https://github.com/stepjam/RLBench/workflows/Unit%20Tests/badge.svg)](https://github.com/stepjam/RLBench/actions) [![Task Tests](https://github.com/stepjam/RLBench/workflows/Task%20Tests/badge.svg)](https://github.com/stepjam/RLBench/actions) [![Discord](https://img.shields.io/discord/694945190867370155.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/DXPCjmd)
 
+**NOTE**: This is a fork of the original repository. This fork implement [PerAct](https://peract.github.io/) and [GNFactor](https://yanjieze.com/GNFactor/) changes to RLBench.
+The implemented changes are used to generate the data for the experiments in the paper [DreMa: Dream Manipulation](https://arxiv.org/abs/2412.14957).
+I'm not the author of the original repository, I just forked it to implement the changes needed for the experiments in the paper (research purpose only). 
+
+-------------------------------------------------------
+
 ![task grid image missing](readme_files/task_grid.png)
+
 
 **RLBench** is an ambitious large-scale benchmark and learning environment 
 designed to facilitate research in a number of vision-guided manipulation

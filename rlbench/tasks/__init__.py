@@ -21,7 +21,6 @@ from rlbench.tasks.insert_onto_square_peg import InsertOntoSquarePeg
 from rlbench.tasks.insert_usb_in_computer import InsertUsbInComputer
 from rlbench.tasks.lamp_off import LampOff
 from rlbench.tasks.lamp_on import LampOn
-from rlbench.tasks.lift_numbered_block import LiftNumberedBlock
 from rlbench.tasks.light_bulb_in import LightBulbIn
 from rlbench.tasks.light_bulb_out import LightBulbOut
 from rlbench.tasks.meat_off_grill import MeatOffGrill
@@ -35,12 +34,10 @@ from rlbench.tasks.open_grill import OpenGrill
 from rlbench.tasks.open_jar import OpenJar
 from rlbench.tasks.open_microwave import OpenMicrowave
 from rlbench.tasks.open_oven import OpenOven
-from rlbench.tasks.open_washing_machine import OpenWashingMachine
 from rlbench.tasks.open_window import OpenWindow
 from rlbench.tasks.open_wine_bottle import OpenWineBottle
 from rlbench.tasks.phone_on_base import PhoneOnBase
 from rlbench.tasks.pick_and_lift import PickAndLift
-from rlbench.tasks.pick_and_lift_small import PickAndLiftSmall
 from rlbench.tasks.pick_up_cup import PickUpCup
 from rlbench.tasks.place_cups import PlaceCups
 from rlbench.tasks.place_hanger_on_rack import PlaceHangerOnRack
@@ -75,14 +72,12 @@ from rlbench.tasks.scoop_with_spatula import ScoopWithSpatula
 from rlbench.tasks.screw_nail import ScrewNail
 from rlbench.tasks.set_the_table import SetTheTable
 from rlbench.tasks.setup_checkers import SetupCheckers
-from rlbench.tasks.setup_chess import SetupChess
 from rlbench.tasks.slide_block_to_target import SlideBlockToTarget
 from rlbench.tasks.slide_cabinet_open import SlideCabinetOpen
 from rlbench.tasks.slide_cabinet_open_and_place_cups import \
     SlideCabinetOpenAndPlaceCups
 from rlbench.tasks.solve_puzzle import SolvePuzzle
 from rlbench.tasks.stack_blocks import StackBlocks
-from rlbench.tasks.stack_chairs import StackChairs
 from rlbench.tasks.stack_cups import StackCups
 from rlbench.tasks.stack_wine import StackWine
 from rlbench.tasks.straighten_rope import StraightenRope
@@ -110,6 +105,15 @@ from rlbench.tasks.unplug_charger import UnplugCharger
 from rlbench.tasks.water_plants import WaterPlants
 from rlbench.tasks.weighing_scales import WeighingScales
 from rlbench.tasks.wipe_desk import WipeDesk
+
+# new tasks added in the PerAct paper
+from rlbench.tasks.put_rubbish_in_color_bin import PutRubbishInColorBin
+from rlbench.tasks.place_wine_at_rack_location import PlaceWineAtRackLocation
+from rlbench.tasks.slide_block_to_color_target import SlideBlockToColorTarget
+from rlbench.tasks.sweep_to_dustpan_of_size import SweepToDustpanOfSize
+from rlbench.tasks.put_books_at_shelf_location import PutBooksAtShelfLocation
+from rlbench.tasks.set_clock_to_time import SetClockToTime
+
 
 FS10_V1 = {
     'train': [

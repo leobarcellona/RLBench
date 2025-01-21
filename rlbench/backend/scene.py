@@ -19,6 +19,7 @@ from rlbench.demo import Demo
 from rlbench.noise_model import NoiseModel
 from rlbench.observation_config import ObservationConfig, CameraConfig
 
+
 STEPS_BEFORE_EPISODE_START = 10
 
 
@@ -59,6 +60,8 @@ class Scene(object):
 
         self._initial_robot_state = (robot.arm.get_configuration_tree(),
                                      robot.gripper.get_configuration_tree())
+
+        self._ignore_collisions_for_current_waypoint = False
 
         # Set camera properties from observation config
         self._set_camera_properties()
@@ -165,6 +168,21 @@ class Scene(object):
             self.task.restore_state(self._initial_task_state)
         self.task.set_initial_objects_in_scene()
 
+    def reset_robot(self) -> None:
+        """Resets the joint angles. """
+        self.robot.gripper.release()
+
+        arm, gripper = self._initial_robot_state
+        self.pyrep.set_configuration_tree(arm)
+        self.pyrep.set_configuration_tree(gripper)
+        self.robot.arm.set_joint_positions(self._start_arm_joint_pos, disable_dynamics=True)
+        self.robot.arm.set_joint_target_velocities(
+            [0] * len(self.robot.arm.joints))
+        self.robot.gripper.set_joint_positions(
+            self._starting_gripper_joint_pos, disable_dynamics=True)
+        self.robot.gripper.set_joint_target_velocities(
+            [0] * len(self.robot.gripper.joints))
+
     def get_observation(self) -> Observation:
         tip = self.robot.arm.get_tip()
 
@@ -189,9 +207,7 @@ class Scene(object):
         wc_ob = self._obs_config.wrist_camera
         fc_ob = self._obs_config.front_camera
 
-        lsc_mask_fn, rsc_mask_fn, oc_mask_fn, wc_mask_fn, fc_mask_fn = [
-            (rgb_handles_to_mask if c.masks_as_one_channel else lambda x: x
-             ) for c in [lsc_ob, rsc_ob, oc_ob, wc_ob, fc_ob]]
+        lsc_mask_fn, rsc_mask_fn, oc_mask_fn, wc_mask_fn, fc_mask_fn = [(rgb_handles_to_mask if c.masks_as_one_channel else lambda x: x) for c in [lsc_ob, rsc_ob, oc_ob, wc_ob, fc_ob]]
 
         def get_rgb_depth(sensor: VisionSensor, get_rgb: bool, get_depth: bool,
                           get_pcd: bool, rgb_noise: NoiseModel,
@@ -244,6 +260,8 @@ class Scene(object):
 
         left_shoulder_mask = get_mask(self._cam_over_shoulder_left_mask,
                                       lsc_mask_fn) if lsc_ob.mask else None
+
+
         right_shoulder_mask = get_mask(self._cam_over_shoulder_right_mask,
                                       rsc_mask_fn) if rsc_ob.mask else None
         overhead_mask = get_mask(self._cam_overhead_mask,
@@ -285,7 +303,7 @@ class Scene(object):
             joint_forces=(joint_forces
                           if self._obs_config.joint_forces else None),
             gripper_open=(
-                (1.0 if self.robot.gripper.get_open_amount()[0] > 0.9 else 0.0)
+                (1.0 if self.robot.gripper.get_open_amount()[0] > 0.95 else 0.0) # Changed from 0.9 to 0.95 because objects, the gripper does not close completely
                 if self._obs_config.gripper_open else None),
             gripper_pose=(
                 np.array(tip.get_pose())
@@ -302,6 +320,9 @@ class Scene(object):
             task_low_dim_state=(
                 self.task.get_low_dim_state() if
                 self._obs_config.task_low_dim_state else None),
+            ignore_collisions=(
+                np.array((1.0 if self._ignore_collisions_for_current_waypoint else 0.0))
+                if self._obs_config.record_ignore_collisions else None),
             misc=self._get_misc())
         obs = self.task.decorate_observation(obs)
         return obs
@@ -338,7 +359,9 @@ class Scene(object):
             demo.append(self.get_observation())
         while True:
             success = False
+            self._ignore_collisions_for_current_waypoint = False
             for i, point in enumerate(waypoints):
+                self._ignore_collisions_for_current_waypoint = point._ignore_collisions
                 point.start_of_path()
                 if point.skip:
                     continue
@@ -452,7 +475,7 @@ class Scene(object):
         if record:
             demo_list.append(self.get_observation())
         if func is not None:
-            func(self.get_observation())
+            func(scene=self, obs=self.get_observation())
 
     def _set_camera_properties(self) -> None:
         def _set_rgb_props(rgb_cam: VisionSensor,

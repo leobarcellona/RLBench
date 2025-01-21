@@ -31,9 +31,7 @@ class TaskEnvironment(object):
                  dataset_root: str,
                  obs_config: ObservationConfig,
                  static_positions: bool = False,
-                 attach_grasped_objects: bool = True,
-                 shaped_rewards: bool = False
-                 ):
+                 attach_grasped_objects: bool = True):
         self._pyrep = pyrep
         self._robot = robot
         self._scene = scene
@@ -44,7 +42,6 @@ class TaskEnvironment(object):
         self._obs_config = obs_config
         self._static_positions = static_positions
         self._attach_grasped_objects = attach_grasped_objects
-        self._shaped_rewards = shaped_rewards
         self._reset_called = False
         self._prev_ee_velocity = None
         self._enable_path_observations = False
@@ -88,6 +85,9 @@ class TaskEnvironment(object):
         # Returns a list of descriptions and the first observation
         return desc, self._scene.get_observation()
 
+    def get_task_descriptions(self) -> List[str]:
+        return self._scene.task.init_episode(self._variation_number)
+
     def get_observation(self) -> Observation:
         return self._scene.get_observation()
 
@@ -98,13 +98,8 @@ class TaskEnvironment(object):
                 "Call 'reset' before calling 'step' on a task.")
         self._action_mode.action(self._scene, action)
         success, terminate = self._task.success()
-        reward = float(success)
-        if self._shaped_rewards:
-            reward = self._task.reward()
-            if reward is None:
-                raise RuntimeError(
-                    'User requested shaped rewards, but task %s does not have '
-                    'a defined reward() function.' % self._task.get_name())
+        task_reward = self._task.reward()
+        reward = float(success) if task_reward is None else task_reward
         return self._scene.get_observation(), reward, terminate
 
     def get_demos(self, amount: int, live_demos: bool = False,
@@ -154,8 +149,9 @@ class TaskEnvironment(object):
                     demos.append(demo)
                     break
                 except Exception as e:
+                    callable_each_step(reset=True)
                     attempts -= 1
-                    logging.info('Bad demo. ' + str(e))
+                    logging.info('Bad demo. ' + str(e) + ' Attempts left: ' + str(attempts))
             if attempts <= 0:
                 raise RuntimeError(
                     'Could not collect demos. Maybe a problem with the task?')
@@ -164,3 +160,26 @@ class TaskEnvironment(object):
     def reset_to_demo(self, demo: Demo) -> (List[str], Observation):
         demo.restore_state()
         return self.reset()
+
+    def get_last_state(self, callable: Callable[[Observation], None] = None,):
+        self._scene.reset_robot()
+        callable(scene=self._scene, obs=self._scene.get_observation(), is_last_step=True)
+
+    def get_labels(self):
+        obs = self._scene.get_observation()
+        from pyrep.objects.object import Object
+
+        handles_l = np.unique((obs.left_shoulder_mask * 255).astype(np.uint8))
+        handles_r = np.unique((obs.right_shoulder_mask * 255).astype(np.uint8))
+        handles_f = np.unique((obs.front_mask * 255).astype(np.uint8))
+        handles_w = np.unique((obs.wrist_mask * 255).astype(np.uint8))
+        handles_o = np.unique((obs.overhead_mask * 255).astype(np.uint8))
+
+        objects_labels = np.unique(np.concatenate((handles_l, handles_r, handles_f, handles_w, handles_o)))
+        objects_names = []
+        for i in objects_labels:
+
+                object_name = Object.get_object(int(i)).get_name()
+                objects_names.append([object_name, i])
+
+        return objects_names
