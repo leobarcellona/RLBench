@@ -197,25 +197,29 @@ if __name__ == "__main__":
 
         # get the images and point clouds
         point_clouds = []
-
+        observation_images = []
         for k, camera in enumerate(args.cameras):
 
             color_image, depth_image, point_cloud = get_images_and_point_cloud(args.data_path, obs, frame_number, camera, None if args.show_original_colors else colors[k])
 
             point_clouds.append(point_cloud)
-            images.append([color_image, depth_image])
+            observation_images.append([color_image, depth_image])
+
+        images.append(observation_images)
 
         # visualize the frame
         visualizer = o3d.visualization.draw_geometries([frame, trajectory_frame, origin_frame] + point_clouds)
 
-    # show images using matplotlib in the same figure
+    # show images using matplotlib in the same figure for each observation
     if args.show_images:
-        for color_image, depth_image in images:
-            fig, axs = plt.subplots(1, 2)
-            axs[0].imshow(color_image)
-            axs[0].set_title("Color")
-            axs[1].imshow(depth_image)
-            axs[1].set_title("Depth")
+        for observation_images in images:
+
+            fig, axs = plt.subplots(len(observation_images), 2)
+            for i, (color_image, depth_image) in enumerate(observation_images):
+                axs[i][0].imshow(color_image)
+                axs[i][0].set_title("Color")
+                axs[i][1].imshow(depth_image)
+                axs[i][1].set_title("Depth")
             plt.show()
             plt.close()
 
