@@ -3,7 +3,6 @@ import os
 import pickle
 import numpy as np
 import open3d as o3d
-import matplotlib
 import matplotlib.pyplot as plt
 
 from scipy.spatial.transform import Rotation as R
@@ -141,7 +140,9 @@ def get_images_and_point_cloud(observation, frame_number, camera, color=None):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data_path", type=str, default="/home/leonardo/workspace/git_repo/DreMa/external/data/place_shape_in_shape_sorter/all_variations/episodes/episode0")
+    parser.add_argument("--data_path", type=str, required=True)
+    parser.add_argument("--task", type=str, required=True)
+    parser.add_argument("--episode", type=int, default=0)
     parser.add_argument("--cameras",  nargs='+', type=str, default=["wrist", "front"])
     parser.add_argument("--frame_numbers", nargs='+', type=int, default=[0,-1])
     parser.add_argument("--show_keypoints", type=bool, default=True)
@@ -157,6 +158,8 @@ if __name__ == "__main__":
               [1, 1, 0],  # Yellow
               [1, 0, 1],  # Magenta
               [0, 1, 1]]  # Cyan
+
+    args.data_path = os.path.join(args.data_path, args.task, "all_variations", "episodes", "episode"+str(args.episode))
 
     # set the data path
     observation_path = os.path.join(args.data_path, "low_dim_obs.pkl")
