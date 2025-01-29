@@ -111,10 +111,10 @@ def create_visualization_frames(observations, keypoints):
 
     return origin_frame, keypoints_frame_list, trajectory_frame
 
-def get_images_and_point_cloud(observation, frame_number, camera, color=None):
+def get_images_and_point_cloud(data_path, observation, frame_number, camera, color=None):
     # get the path to the images
-    path_depth = os.path.join(args.data_path, camera + "_depth", str(frame_number) + ".png")
-    path_rgb = os.path.join(args.data_path, camera + "_rgb", str(frame_number) + ".png")
+    path_depth = os.path.join(data_path, camera + "_depth", str(frame_number) + ".png")
+    path_rgb = os.path.join(data_path, camera + "_rgb", str(frame_number) + ".png")
     near = observation.misc["%s_camera_near" % camera]
     far = observation.misc["%s_camera_far" % camera]
 
@@ -198,9 +198,9 @@ if __name__ == "__main__":
         # get the images and point clouds
         point_clouds = []
 
-        for camera in args.cameras:
+        for k, camera in enumerate(args.cameras):
 
-            color_image, depth_image, point_cloud = get_images_and_point_cloud(obs, frame_number, camera, None if args.show_original_colors else colors[0])
+            color_image, depth_image, point_cloud = get_images_and_point_cloud(args.data_path, obs, frame_number, camera, None if args.show_original_colors else colors[k])
 
             point_clouds.append(point_cloud)
             images.append([color_image, depth_image])
