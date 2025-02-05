@@ -2,7 +2,7 @@ from typing import List, Tuple
 from rlbench.backend.task import Task
 from typing import List
 from rlbench.backend.task import Task
-from rlbench.const import colors
+from rlbench.const import colors, colors_seen, colors_unseen
 from rlbench.backend.conditions import NothingGrasped, DetectedCondition
 from rlbench.backend.spawn_boundary import SpawnBoundary
 import numpy as np
@@ -20,6 +20,10 @@ class CloseJar(Task):
         self.conditions = [NothingGrasped(self.robot.gripper)]
 
     def init_episode(self, index: int) -> List[str]:
+
+        # colors = colors_seen
+        # colors = colors_unseen
+        
         b = SpawnBoundary([self.boundary])
         for obj in self.jars:
             b.sample(obj, min_distance=0.01)

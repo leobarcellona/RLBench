@@ -130,6 +130,18 @@ def merge_coppelia_labels(path):
                 continue
             elif "shape_sorter" in name:
                 new_label = int(number)
+            elif "target1" == name:
+                continue
+            elif "target2" == name:
+                continue
+            elif "target3" == name:
+                continue
+            elif "target4" == name:
+                continue
+            elif "spawn_boundary" in name:
+                continue
+            elif "success_visual" in name:
+                continue
 
             # add the new label
             new_labels.append((name, int(number)))

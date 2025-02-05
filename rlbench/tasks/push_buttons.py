@@ -37,7 +37,8 @@ colors = [
 ]
 
 color_permutations = list(itertools.permutations(colors, 3))
-
+import random
+random.shuffle(color_permutations)
 
 def print_permutations(color_permutations):
     # pretty printing color_permutations for debug
@@ -64,7 +65,7 @@ class PushButtons(Task):
         self.boundaries = Shape('push_buttons_boundary')
         # goal_conditions merely state joint conditions for push action for
         # each button regardless of whether the task involves pushing it
-        self.goal_conditions = [JointCondition(self.target_joints[n], 0.003)
+        self.goal_conditions = [JointCondition(self.target_joints[n], 0.001)
                                 for n in range(3)]
 
         self.register_waypoint_ability_start(0, self._move_above_next_target)

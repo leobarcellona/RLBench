@@ -33,6 +33,32 @@ colors = [
     ('white', (1.0, 1.0, 1.0)),
 ]
 
+colors_seen = [
+    ('maroon', (0.5, 0.0, 0.0)),
+    ('lime', (0.0, 1.0, 0.0)),
+    ('navy', (0.0, 0.0, 0.5)),
+    ('yellow', (1.0, 1.0, 0.0)),
+    ('cyan', (0.0, 1.0, 1.0)),
+    ('magenta', (1.0, 0.0, 1.0)),
+    ('silver', (0.75, 0.75, 0.75)),
+    ('gray', (0.5, 0.5, 0.5)),
+    ('orange', (1.0, 0.5, 0.0)),
+    ('olive', (0.5, 0.5, 0.0)),
+    ('purple', (0.5, 0.0, 0.5)),
+    ('teal', (0, 0.5, 0.5)),
+    ('azure', (0.0, 0.5, 1.0)),
+    ('violet', (0.5, 0.0, 1.0)),
+    ('rose', (1.0, 0.0, 0.5)),
+]
+
+colors_unseen = [
+    ('green', (0.0, 0.5, 0.0)),
+    ('blue', (0.0, 0.0, 1.0)),
+    ('red', (1.0, 0.0, 0.0)),
+    ('black', (0.0, 0.0, 0.0)),
+    ('white', (1.0, 1.0, 1.0)),
+]
+
 # Arms from PyRep need to be modified to include a wrist camera.
 # Currently, only the arms/grippers below are supported.
 SUPPORTED_ROBOTS = {

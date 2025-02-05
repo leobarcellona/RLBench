@@ -49,7 +49,3 @@ class ReachTarget(Task):
 
     def is_static_workspace(self) -> bool:
         return True
-
-    def reward(self) -> float:
-        return -np.linalg.norm(self.target.get_position() -
-                               self.robot.arm.get_tip().get_position())
