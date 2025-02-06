@@ -29,7 +29,7 @@ def convert_dictionary_to_rlbench(original_path, scene, episodes, generated_path
             if generated_episode[:7] != "episode":
                 continue
 
-            generated_low_dim_obs_path = os.path.join(generated_episodes_path, generated_episode, "low_dim_obs_generated.pkl")
+            generated_low_dim_obs_path = os.path.join(generated_episodes_path, generated_episode, "generated_trajectory.pkl")
             generated_low_dim_obs_output = os.path.join(generated_episodes_path, generated_episode, "low_dim_obs.pkl")
             generated_description_output = os.path.join(generated_episodes_path, generated_episode, "variation_descriptions.pkl")
             generated_number_output = os.path.join(generated_episodes_path, generated_episode, "variation_number.pkl")
@@ -175,7 +175,7 @@ def merge_generated_data(generated_path, output_path, scenes, starting_index=0):
             total_episodes_counter += 1
 
             # get the generated episodes
-            path = os.path.join(args.path_in, f"{task}_episode{episode}_start")
+            path = os.path.join(args.generated_path, f"{task}_episode{episode}_start")
             gen_episodes = [os.path.join(path, f) for f in os.listdir(path) if os.path.isdir(os.path.join(path, f))]
             all_task_paths += gen_episodes
 
@@ -199,7 +199,7 @@ def merge_generated_data(generated_path, output_path, scenes, starting_index=0):
                     # increase the index of the output episodes
                     number += 1
 
-                # reset the counters and epsides
+                # reset the counters and episodes
                 all_task_paths = []
                 episode_number_counter = 0
                 # increment
@@ -213,7 +213,7 @@ if __name__ == '__main__':
     parser.add_argument('--scenes', type=str, nargs='+', required=True)
     parser.add_argument("--convert_to_rlbench", type=bool, default=True)
     parser.add_argument('--start_index', type=bool, default=0)
-    parser.add_argument("--cameras", type=str, nargs='+', default=["left_shoulder", "right_shoulder", "overhead", "wrist", "front"])
+    parser.add_argument("--cameras", type=str, nargs='+', default=["left_shoulder", "right_shoulder", "wrist", "front"])
     parser.add_argument("--keep_incomplete_demos", type=bool, default=True)
 
     args = parser.parse_args()
@@ -226,6 +226,7 @@ if __name__ == '__main__':
 
             convert_dictionary_to_rlbench(original_path, scene, original_episodes, args.generated_path, args.cameras, keep_incomplete_demos=args.keep_incomplete_demos)
 
+            merge_generated_data(args.generated_path, args.output_path, scene, starting_index=args.start_index)
 
 
 

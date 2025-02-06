@@ -142,9 +142,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_path", type=str, required=True)
     parser.add_argument("--task", type=str, required=True)
-    parser.add_argument("--episode", type=int, default=0)
-    parser.add_argument("--cameras",  nargs='+', type=str, default=["wrist", "front"])
-    parser.add_argument("--frame_numbers", nargs='+', type=int, default=[0,-1])
+    parser.add_argument("--episode", type=str, default="0")
+    parser.add_argument("--cameras",  nargs='+', type=str, default=["front"])
+    parser.add_argument("--frame_numbers", nargs='+', type=int, default=[1,-1])
     parser.add_argument("--show_keypoints", type=bool, default=True)
     parser.add_argument("--show_original_colors", type=bool, default=True)
     parser.add_argument("--show_images", type=bool, default=True)
@@ -214,7 +214,7 @@ if __name__ == "__main__":
     if args.show_images:
         for observation_images in images:
 
-            fig, axs = plt.subplots(len(observation_images), 2)
+            fig, axs = plt.subplots(len(observation_images), 2, squeeze=False)
             for i, (color_image, depth_image) in enumerate(observation_images):
                 axs[i][0].imshow(color_image)
                 axs[i][0].set_title("Color")
